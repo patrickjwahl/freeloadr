@@ -1,0 +1,277 @@
+@use '../styles/variables';
+
+.container {
+    height: 60px;
+    width: 100%;
+    position: fixed;
+    padding: 10px 30px;
+    background-color: variables.$background-color;
+    z-index: 200;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 30px 0 rgba($color: black, $alpha: 0.2);   
+}
+
+.logoContainer {
+    height: 100%;
+    position: relative;
+    top: -4px;
+    img {
+        height: 100%;
+        width: auto;
+    }
+}
+
+.padding {
+    height: 60px;
+}
+
+@keyframes poof {
+    from {
+        width: 40px;
+        height: 40px;
+        margin-top: -20px;
+        margin-left: -20px;
+        opacity: 1;
+    }
+
+    90% {
+        width: 100px;
+        height: 100px;
+        margin-top: -50px;
+        margin-left: -50px;
+        opacity: 0;
+    }
+
+    95% {
+        width: 0;
+        height: 0;
+        margin-top: 0;
+        margin-left: 0;
+        opacity: 0;
+    }
+
+    96% {
+        width: 0;
+        height: 0;
+        margin-top: 0;
+        margin-left: 0;
+        opacity: 0;
+    }
+
+    to {
+        width: 0;
+        height: 0;
+        margin-top: 0;
+        margin-left: 0;
+        opacity: 0;
+    }
+}
+
+.buttonsContainer {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    gap: 10px;
+    
+    span {
+        font-size: 32px !important;
+        cursor: pointer;
+        padding: 5px;
+        user-select: none;
+        height: 100%;
+        position: relative;
+        z-index: 20;
+        display: block !important;
+
+        &::after {
+            content: '';
+            position: absolute;
+            height: 0px;
+            width: 0px;
+            border-radius: 200px;
+            background-color: variables.$highlight-color;
+            left: 50%;
+            top: 50%;
+            margin-left: 0px;
+            opacity: 0;
+            margin-top: 0px;
+            z-index: -5;
+            animation: 0.5s poof;
+        }
+
+        &:hover {
+            font-variation-settings: 'FILL' 1.0;
+            color: variables.$theme-dark;
+        }
+
+        &:active::after {
+            width: 40px;
+            height: 40px;
+            margin-top: -20px;
+            margin-left: -20px;
+            opacity: 1;
+            animation: none;
+            transition: all 100ms ease-out;
+        }
+
+        &:not(:hover) {
+            &::after {
+                visibility: hidden;
+            }
+        }
+
+        &.withMessage::before {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 200px;
+            background-color: variables.$highlight-color;
+            top: 0;
+            right: 0;
+        }
+    }
+
+    div {
+        user-select: none;
+        cursor: pointer;
+        padding: 5px 10px;
+        border: 1px solid transparent;
+        font-weight: 600;
+        margin-left: 10px;
+
+        &:hover {
+            border: 1px solid variables.$foreground-color;
+            border-radius: 5px;
+        }
+
+        &:active {
+            background-color: variables.$foreground-color;
+            color: variables.$background-color;
+        }
+    }
+}
+
+.sidecar {
+    position: fixed;
+    right: 10px;
+    top: 65px;
+    z-index: 5000;
+    background-color: variables.$background-color;
+    padding: 20px 20px;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border-radius: 10px;
+    border: 2px solid rgba(variables.$foreground-color, 1);
+    // box-shadow: 0px 0px 30px 0 rgba($color: black, $alpha: 0.2);
+    transform: scaleY(0);
+    transform-origin: left -11px;
+    transition: all 0.1s ease-out;
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 14px solid transparent;
+        border-right: 14px solid transparent;
+        border-bottom: 14px solid variables.$background-color;
+        top: -14px;
+        right: 25px;
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left: 15px solid transparent;
+        border-right: 15px solid transparent;
+        border-bottom: 15px solid variables.$foreground-color;
+        top: -17px;
+        right: 24px;
+    }
+
+    a {
+        width: 100%;
+    }
+
+    div {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 5px;
+        padding: 5px 10px;
+        border: 1px solid variables.$background-color;
+        user-select: none;
+        border-radius: 10px;
+        width: 100%;
+
+        cursor: pointer;
+
+        &:hover {
+            color: variables.$theme-dark;
+            border: 1px solid variables.$theme-dark;
+        }
+
+        &:active {
+            background-color: variables.$foreground-color;
+            color: variables.$theme-light;
+        }
+    }
+
+    h3 {
+        margin: 0;
+        margin-bottom: 10px;
+    }
+
+    &.visible {
+        transform: scaleY(1);
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .buttonsContainer{
+        span {
+            gap: 0;
+        }
+        div {
+            padding: 10px 5px;
+            margin-left: 3px;
+        }
+    }
+
+    .container {
+        padding: 10px 10px;
+        background-color: variables.$theme-light;
+    }
+
+    .sidecar {
+        right: 5px;
+        top: 60px;
+
+        &::before {
+            border-left: 11px solid transparent;
+            border-right: 11px solid transparent;
+            border-bottom: 11px solid variables.$foreground-color;
+            right: 13px;
+            top: -11px;
+        }
+
+        &::after {
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid variables.$background-color;
+            right: 16px;
+            top: -8px;
+        }
+    }
+    
+}

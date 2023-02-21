@@ -1,0 +1,109 @@
+@use './variables';
+
+.container {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    gap: 20px;
+
+    button {
+        border: none;
+        font-size: 1em;
+        background-color: variables.$highlight-color;
+        border: 1px solid variables.$highlight-color;
+        padding: 5px 10px;
+        border-radius: 20px;
+        color: variables.$foreground-color;
+        cursor: pointer;
+        transition: background-color 0.5s ease-out;
+        user-select: none;
+        margin-bottom: 10px;
+
+        &:hover {
+            background-color: variables.$theme-dark;
+        }
+
+        &.cancel {
+            background-color: transparent;
+            border: 1px solid variables.$foreground-color;
+
+            &:hover {
+                background-color: variables.$theme-dark;
+            }
+        }
+
+        &:active {
+            filter: brightness(60%) !important;
+        }
+    }
+
+    input[type=text] {
+        padding: 5px;
+        font-family: inherit;
+        font-size: 1.4em;
+        position: relative;
+        max-width: 100%;
+        font-weight: bold;
+        background-color: rgba(variables.$highlight-color, 0.4);
+        border: none;
+        border-bottom: 1px solid rgba(variables.$foreground-color, 0.5);
+        border-radius: 0;
+        
+        &:focus {
+            outline: none;
+            border-bottom: 1px solid variables.$foreground-color;
+        }
+
+        &.smallerInput {
+            font-size: 1em;
+            font-weight: normal;
+        }
+    }
+}
+
+.buttonContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+}
+
+.leftContainer {
+    
+}
+
+.profileBox {
+    background-color: variables.$theme-light;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: 40px;
+
+    h2 {
+        margin-top: 0;
+    }
+}
+
+.rightContainer {
+    flex: 1;
+    padding: 20px;
+    h1 {
+        text-align: center;
+    }
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+    gap: 10px;
+}
+
+@media screen and (max-width: 700px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .rightContainer {
+        padding-top: 0;
+    }
+}

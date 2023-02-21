@@ -1,0 +1,48 @@
+@use 'variables';
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background-color: variables.$background-color;
+  color: variables.$foreground-color;
+  overflow-x: hidden !important;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.material-symbols-outlined {
+}
+
+.separator-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.separator {
+    width: 100px;
+    height: 0px;
+    border: 2px solid variables.$foreground-color;
+}
+
+.image-animation-enter {
+    transform: scaleX(0);
+}
+
+.image-animation-enter-active {
+    transform: scaleX(1);
+    transition: all 0.5s ease-out;
+}

@@ -1,0 +1,130 @@
+@use 'variables';
+
+.container {
+    background: linear-gradient(#f9e4f3, #fe7496, #ea0061);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.heroImage {
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+.heroContainer {
+    text-align: center;
+    font-size: 28px;
+    padding: 40px;
+    h1 {
+        margin-top: 0;
+    }
+
+    input[type=tel] {
+        font-family: inherit;
+        padding: 5px;
+        font-size: inherit;
+        background-color: #220;
+        padding: 20px;
+        color: white;
+        width: 200px;
+        text-align: center;
+        border: none;
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border: 2px solid #220;
+        transition: border-color 0.5s ease-out, padding-left 0.5s ease-out;
+        position: relative;
+
+        &::placeholder {
+            color: red;
+        }
+
+        &:focus {
+            outline: none;
+
+            &::placeholder {
+                color: transparent;
+            }
+        }
+    }
+
+    button {
+        font-family: inherit;
+        font-size: 17px;
+        cursor: pointer;
+        padding: 0 10px;
+        border: none;
+        border-radius: 0;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        transition: background-color 0.5s ease-out, color 0.5s ease-out, border-color 0.5s ease-out, left 0.5s ease-out, margin 0.5s ease-out, padding 0.5s ease-out;
+        border: 2px solid #220;
+        border-left: none;
+        margin-right: 0;
+        position: relative;
+        z-index: 3;
+        left: -2px;
+        color: #220;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -20px;
+            width: 20px;
+            height: 100%;
+            background-color: transparent;
+            border: 2px solid #220;
+            border-left-color: transparent;
+            border-right-color: transparent;
+            transition: border-color 0.5s ease-out;
+        }
+
+        &:hover {
+            background-color: #220;
+            color: white;
+            border-top-color: white;
+            border-bottom-color: white;
+            border-right-color: white;
+            left: -30px;
+            margin-right: -20px;
+            padding-right: 20px;
+
+            &::before {
+                border-top-color: white;
+                border-bottom-color: white;
+            }
+        }
+
+        &:active {
+            filter: brightness(150%);
+        }
+    }
+
+    button:hover + input {
+        border-color: white;
+        border-right-color: transparent;
+        padding-left: 0px;
+    }
+
+    button:active + input {
+        filter: brightness(150%);
+    }
+
+    input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0px 1000px #220 inset;
+        -webkit-text-fill-color: white;
+    }
+}
+
+.formContainer {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}

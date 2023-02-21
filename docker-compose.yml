@@ -1,0 +1,24 @@
+services:
+  web:
+    build: ./services/web
+    command: python manage.py run_socket
+    volumes:
+      - ./services/web/:/usr/src/app/
+    ports:
+      - 5000:5000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+
+  db:
+    image: postgis/postgis:14-3.3
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=freeloadr_app
+      - POSTGRES_PASSWORD=dev_pw
+      - POSTGRES_DB=app_db
+
+volumes:
+  postgres_data:
