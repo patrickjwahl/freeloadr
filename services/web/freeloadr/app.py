@@ -7,13 +7,13 @@ from functools import wraps
 import jwt
 from datetime import datetime, timedelta
 from sqlalchemy.sql import func
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 import json
 import traceback
 from PIL import Image, ImageOps
 from flask_socketio import emit
 
-from .s3_functions import upload_file, get_presigned_urls, delete_object
+from .s3_functions import upload_file, get_presigned_urls, delete_object, get_urls
 
 from .base import app, db, socketio
 from .model import Conversation, Message, Person, Listing, \
@@ -103,9 +103,16 @@ def get_conversation(current_user, id):
 
     page = int(request.args.get('page')) if request.args.get('page') else 1
 
-    messages = Message.query.filter_by(conversation_id=id).order_by(Message.sent_at.desc()).paginate(page=page, per_page=10).items
+    messages = Message.query.filter_by(conversation_id=id).order_by(Message.sent_at.desc())
 
-    return {'code': 'OK', 'conversation': conversation_schema.dump(conversation), 'messages': messages_schema.dump(messages)}
+    image = ''
+    urls = get_urls(app.config['S3_BUCKET'], conversation.listing_id, app.config['CLOUDFRONT_DOMAIN'])
+    if len(urls) > 0:
+        image = urls[0]
+    else:
+        image = app.config['CLOUDFRONT_DOMAIN']
+
+    return {'code': 'OK', 'conversation': conversation_schema.dump(conversation), 'messages': messages_schema.dump(messages), 'image': image}
 
 @app.route('/conversations', methods=['GET'])
 @login_required
@@ -114,8 +121,52 @@ def get_conversations(current_user):
                     .join(Listing) \
                     .filter(or_(Listing.owner_id == current_user.id, Conversation.asker_id == current_user.id)) \
                     .order_by(Conversation.last_modified.desc()).all()
+
+    images = []
+    for conversation in conversations:
+        urls = get_urls(app.config['S3_BUCKET'], conversation.listing_id, app.config['CLOUDFRONT_DOMAIN'])
+        if len(urls) > 0:
+            images.append(urls[0])
+        else:
+            images.append(app.config['CLOUDFRONT_DOMAIN'])
     
-    return {'code': 'OK', 'conversations': conversations_schema.dump(conversations)}
+    return {'code': 'OK', 'conversations': conversations_schema.dump(conversations), 'images': images}
+
+
+@app.route('/conversations/unread', methods=['GET'])
+@login_required
+def get_unread_conversations(current_user):
+    conversations = Conversation.query \
+                    .join(Listing) \
+                    .filter(or_(Listing.owner_id == current_user.id, Conversation.asker_id == current_user.id)) \
+                    .order_by(Conversation.last_modified.desc()).all()
+
+    conversation_ids = list(map(lambda c: c.id, conversations))
+    unread_messages = Message.query \
+        .join(Conversation) \
+        .filter(and_(Message.read == False, Conversation.id.in_(conversation_ids), Message.sender_id != current_user.id)) \
+        .all()
+    
+    unread_conversation_ids = set(map(lambda m: m.conversation_id, unread_messages))
+    unread_conversations = list(filter(lambda c: c.id in unread_conversation_ids, conversations))
+
+    return {'code': 'OK', 'conversations': conversations_schema.dump(unread_conversations)}
+
+@app.route('/conversation/mark/<id>', methods=['GET'])
+@login_required
+def mark_as_read(current_user, id):
+    conversation = Conversation.query.filter_by(id=id).first()
+    if not conversation:
+        return {'code': 'NO_CONVERSATION_EXISTS'}
+    
+    if current_user.id not in (conversation.listing.owner_id, conversation.asker_id):
+        return {'code': 'NOT_YOUR_CONVERSATION'}
+
+    db.session.query(Message).filter(Message.conversation_id == id).update({Message.read: True}, synchronize_session=False)
+    db.session.commit()
+
+    return {'code': 'OK'}
+
 
 @app.route('/message', methods=['POST'])
 @login_required
@@ -149,7 +200,8 @@ def send_message(current_user):
         conversation_id=conversation.id,
         sender_id=sender_id,
         content=content,
-        sent_at=sent_at
+        sent_at=sent_at,
+        read=False
     )
 
     db.session.add(message)
@@ -161,7 +213,8 @@ def send_message(current_user):
 
     recipient = listing.owner_id if current_user.id == asker_id else asker_id
 
-    socketio.emit('message', {'content': content, 'sent_at': sent_at, 'conversation_id': message.conversation_id, 'sender_id': message.sender_id}, room=client_user_to_sid[recipient])
+    if recipient in client_user_to_sid:
+        socketio.emit('message', {'content': content, 'sent_at': sent_at, 'conversation_id': message.conversation_id, 'sender_id': message.sender_id, 'id': message.id}, room=client_user_to_sid[recipient])
 
     return {'code': 'OK', 'message': message_schema.dump(message), 'conversation': conversation_schema.dump(conversation)}
 
@@ -240,29 +293,68 @@ def add_push_token(current_user):
 
     return {'code': 'OK'}
 
+def get_search_results(query, radius, center):
+
+    radius_in_meters = radius * 1609
+
+    text_search_clause = True
+    if query:
+        query_term = ' | '.join(query.split(' '))
+        text_search_clause = Listing.__ts_vector__.match(query_term, postgres_sql_regconfig='english')
+
+    location_clause = True
+    if center is not None:
+        location_clause = func.ST_Distance(Person.location, center) < radius_in_meters
+
+    listings = Listing.query.join(Person).filter(and_(text_search_clause, location_clause))
+
+    image_urls = []
+    for listing in listings:
+        image_urls.append(get_urls(app.config['S3_BUCKET'], listing.id, app.config['CLOUDFRONT_DOMAIN']))
+
+    return listings, image_urls
+
 @app.route('/search', methods=['GET'])
 @login_required
 def search(current_user):
 
-    zipcode = current_user.zipcode
-
-    search_term = request.args.get('query')
+    search_term = request.args.get('search', '')
+    radius = int(request.args.get('radius', 50))
+    lat = request.args.get('lat')
+    lng = request.args.get('lng')
     page = request.args.get('page')
+
+    center = None
+
+    if not lat or not lng:
+        center = current_user.location
+    else:
+        center = func.ST_GeographyFromText(f'POINT({lat} {lng})')
 
     if page:
         page = int(page)
     else:
         page = 1
 
-    listings = None
+    listings, images = get_search_results(search_term, radius, center)
 
-    if search_term:
-        query_term = ' | '.join(search_term.split(' '))
-        listings = Listing.query.join(Person).filter(Listing.__ts_vector__.match(query_term, postgres_sql_regconfig='english'), Person.zipcode == zipcode).paginate(page=page, per_page=10).items
+    return {'code': 'OK', 'listings': listings_schema.dump(listings), 'images': images}
+
+@app.route('/search/guest', methods=['GET'])
+def guest_search():
+    search_term = request.args.get('search')
+    radius = int(request.args.get('radius', 50))
+    lat = request.args.get('lat')
+    lng = request.args.get('lng')
+
+    if not lat or not lng:
+        center = None
     else:
-        listings = Listing.query.join(Person).filter(Person.zipcode == zipcode).paginate(page=page, per_page=10).items
+        center = func.ST_GeographyFromText(f'POINT({lat} {lng})')
 
-    return {'code': 'OK', 'listings': listings_schema.dump(listings)}
+    listings, images = get_search_results(search_term, radius, center)
+
+    return {'code': 'OK', 'listings': listings_schema.dump(listings), 'images': images}
 
 @app.route('/listings/<user_id>', methods=['GET'])
 def listings(user_id):

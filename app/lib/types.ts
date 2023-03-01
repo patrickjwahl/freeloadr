@@ -16,8 +16,20 @@ export interface Listing {
 
 export interface Message {
     id: number;
-    conversationId: number;
-    senderId: number;
+    conversation_id: number;
+    sender_id: number;
     content: string;
-    sentAt: Date;
+    sent_at: Date;
+}
+
+export interface UIMessage extends Message {
+    isNew: boolean
+}
+
+export interface Conversation {
+    id: number;
+    listing: Listing;
+    asker: Person;
+    last_modified: Date;
+    last_message_text: string;
 }

@@ -14,6 +14,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER')
 app.config['S3_BUCKET'] = os.getenv('S3_BUCKET')
 app.secret_key = os.getenv('SECRET_STRING')
+app.config['CLOUDFRONT_DOMAIN'] = os.getenv('CLOUDFRONT_DOMAIN')
 
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')

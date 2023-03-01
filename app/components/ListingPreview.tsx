@@ -7,16 +7,23 @@ interface Props {
     listing: Listing,
 
     /** Image URLs */
-    images: string[]
+    images: string[],
+
+    showAddress?: boolean
 }
 
-const ListingPreview = ({ listing, images }) => {
+const ListingPreview = ({ listing, images, showAddress = false }) => {
     return (
         <Link href={`/listing/${listing.id}`}>
         <div className={styles.container}>
             <h3>{listing.title}</h3>
             <ImageSlider urls={images} width='100%' height='200px' showThumbnails={false} />
-            <div>{listing.description}</div>
+            <div className={styles.bodyContent}>
+                <div>{listing.description}</div>
+                {showAddress ? <div className={styles.address}>
+                    {listing.owner.address}
+                </div> : (null)}
+            </div>
         </div>
         </Link>
     );

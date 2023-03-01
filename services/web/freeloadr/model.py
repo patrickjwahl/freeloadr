@@ -109,7 +109,7 @@ class ConversationSchema(ma.Schema):
     id = fields.Integer()
     listing = fields.Nested(ListingSchema)
     asker = fields.Nested(PersonSchema)
-    last_modified = fields.DateTime()
+    last_modified = fields.DateTime(format='rfc')
     last_message_text = fields.String()
 
 class Message(db.Model):
@@ -119,13 +119,15 @@ class Message(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey("person.id"), nullable=False)
     content = db.Column(db.Text, nullable=False)
     sent_at = db.Column(db.DateTime, nullable=False)
+    read = db.Column(db.Boolean, nullable=True)
     conversation = db.relationship("Conversation", back_populates="messages")
 
-    def __init__(self, conversation_id, sender_id, content, sent_at):
+    def __init__(self, conversation_id, sender_id, content, sent_at, read):
         self.conversation_id = conversation_id
         self.sender_id = sender_id
         self.content = content
         self.sent_at = sent_at
+        self.read = read
 
 class MessageSchema(ma.Schema):
     class Meta:
@@ -133,8 +135,9 @@ class MessageSchema(ma.Schema):
 
     id = fields.Integer()
     content = fields.String()
-    sent_at = fields.DateTime()
+    sent_at = fields.DateTime(format='rfc')
     sender_id = fields.Integer()
+    read = fields.Boolean()
 
 person_schema = PersonSchema()
 listing_schema = ListingSchema()

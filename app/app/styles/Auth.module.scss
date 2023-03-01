@@ -57,6 +57,7 @@
             border: none;
             border-bottom: 1px solid rgba(variables.$foreground-color, 0.5);
             border-radius: 0;
+            padding-right: 30px;
 
             &::placeholder {
                 color: rgba(variables.$foreground-color, 0.5);

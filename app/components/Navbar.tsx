@@ -8,7 +8,7 @@ import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useContext, useEffect, useRef, useState } from 'react';
-import MessageContext from '../lib/MessageContext';
+import { MessageContext } from '../app/MessageContext';
 
 const Navbar = () => {
 
@@ -41,7 +41,6 @@ const Navbar = () => {
     const handleClick = e => {
 
         if (sidecarOpenRef.current && !e.composedPath().some(element => element.id === 'sidecar' || element.id === 'profile-button')) {
-            console.log('handling');
             setSidecarOpen(false);
         }
     };
@@ -60,13 +59,16 @@ const Navbar = () => {
         <>
             <div onClick={() => {if (sidecarOpen) setSidecarOpen(false)}} className={styles.container}>
                 <div className={styles.logoContainer}>
-                    <Image src={logoImg} alt="logo" />
+                    <Link href='/'>
+                        <Image src={logoImg} alt="logo" />
+                    </Link>
                 </div>
                 <div className={styles.buttonsContainer}>
                     {session.status === 'authenticated' ? (
                         <>
+                            <Link href='/search'><span className='material-symbols-outlined'>search</span></Link>
                             <Link href='/create'><span className='material-symbols-outlined'>add_box</span></Link>
-                            <span className={cn("material-symbols-outlined", {[styles.withMessage]: newMessages.length > 0})}>forum</span>
+                            <Link href='/messages'><span className={cn("material-symbols-outlined", {[styles.withMessage]: newMessages.length > 0})}>forum</span></Link>
                             <span id='profile-button' onClick={() => setSidecarOpen(!sidecarOpen)} className="material-symbols-outlined">account_circle</span>
                         </>
                     ) : (

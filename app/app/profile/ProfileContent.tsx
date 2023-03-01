@@ -44,8 +44,6 @@ export default function Profile({ owner, listings, images, apiDomain }: Props) {
         fields: ['formatted_address', 'geometry']
     };
 
-    console.log('rendering');
-
     const validateName = (forSubmit = false) => {
         if(name.length > 1 && name.length < 26) {
             if (nameError) setNameError(false);

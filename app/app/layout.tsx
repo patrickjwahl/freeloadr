@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react";
 import MessageContext from "./MessageContext";
 import Navbar from "../components/Navbar";
 import { Dosis } from '@next/font/google';
+import { getAPIDomain } from '../util/domain';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../pages/api/auth/[...nextauth]';
 
@@ -15,6 +16,9 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
+
+    const session = await getServerSession(authOptions);
+    const apiDomain = getAPIDomain();
 
     return (
         <html lang='en' className={font.className}>
@@ -29,7 +33,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             </head>
             <body>
                 <AuthContext>
-                    <MessageContext>
+                    <MessageContext sessionData={session} apiDomain={apiDomain}>
                         <Navbar />
                         <main>{children}</main>
                     </MessageContext>

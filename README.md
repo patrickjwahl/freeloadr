@@ -8,4 +8,4 @@ The front end, located in the app/ directory, is a NextJS-based web app. It util
 
 ## Back end
 
-The back end consists of a Flask API connected to a Postgres SQL database, all orchestrated by Docker. The server is Socket.IO-enabled, allowing users to chat with each other in real time. 
+The back end, located in the services/ directory, consists of a Flask API connected to a Postgres SQL database, all orchestrated by Docker. The server is Socket.IO-enabled, allowing users to chat with each other in real time. 

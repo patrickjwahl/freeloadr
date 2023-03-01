@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ClipLoader } from "react-spinners";
+import Link from "next/link";
 
 interface Props {
     listing: Listing,
@@ -35,6 +36,7 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
     const [ isWriting, setIsWriting ] = useState(false);
     const [ message, setMessage ] = useState('');
     const [ messageError, setMessageError ] = useState(false);
+    const [ messageServerError, setMessageServerError ] = useState('');
     const [ isSubmittingMessage, setIsSubmittingMessage ] = useState(false);
 
     // const editImages = images.filter(url => !removedImages.includes(url)).concat(Object.keys(addedImages).map(image => window.URL.createObjectURL(addedImages[image])));
@@ -146,8 +148,30 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
         }
     };
 
-    const submitMessage = () => {
-        
+    const submitMessage = async () => {
+        const payload = {
+            content: message,
+            listingId: listing.id,
+            askerId: session.data.user.id,
+            sentAt: new Date().toISOString()
+        };
+
+        const res = await fetch(`${apiDomain}/message`, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.data.access_token}`
+            }
+        });
+
+        const data = await res.json();
+
+        if (data.code !== 'OK') {
+            setIsSubmittingMessage(false);
+        } else {
+            router.push(`/messages/${data.conversation.id}`);
+        }
     }; 
 
     const submitClicked = (e) => {
@@ -192,7 +216,7 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
                 setIsSubmitting(false);
                 setServerError("Something went wrong. Please try again");
             } else {
-                router.refresh();
+                location.reload();
             }
 
         } catch (e) {
@@ -307,6 +331,7 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
                                     <>
                                         <button className={styles.messageButton} onClick={sendMessageClicked}>SEND YOUR MESSAGE<span className="material-symbols-outlined">send</span></button>
                                         <div style={{display: messageError ? 'block' : 'none'}} className={styles.errorMessage}>Your message must be between 2 and 5000 characters long!</div>
+                                        <div style={{display: messageServerError ? 'block' : 'none'}} className={styles.errorMessage}>{messageServerError}</div>
                                     </>)}
                                 </div>
                             ) : (
@@ -314,7 +339,7 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
                             )}
                         <div className={styles.ownerInfo}>
                             <div style={{fontWeight: 'bold'}}>Listed by:</div>
-                            <div>{listing.owner.name}</div>
+                            <Link href={`/profile/${listing.owner.id}`}><div>{listing.owner.name}</div></Link>
                             <div>{listing.owner.address}</div>
                             <div id='map' ref={mapRef} style={{height: '400px', width: mapWidth, marginTop: '10px', borderRadius: '10px'}}></div>
                         </div>

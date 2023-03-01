@@ -63,8 +63,6 @@ export default function CreateContent({ sessionData, apiDomain }: Props) {
         }, true);
         setServerError('');
 
-        console.log(fieldsValid);
-
         if (fieldsValid) {
             setIsSubmitting(true);
             submitForm();

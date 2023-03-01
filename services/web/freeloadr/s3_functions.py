@@ -29,3 +29,17 @@ def get_presigned_urls(bucket, listing_id):
         pass
 
     return public_urls
+
+def get_urls(bucket, listing_id, cloudfront_domain):
+
+    prefix = f'{str(listing_id)}/'
+    s3_client = boto3.client('s3')
+    public_urls = []
+    try:
+        items = s3_client.list_objects(Bucket=bucket, Prefix=prefix)['Contents']
+        items = sorted(items, key=lambda item: item['LastModified'])
+        public_urls = list(map(lambda item: f'{cloudfront_domain}/{item["Key"]}', items))
+    except Exception as e:
+        pass
+
+    return public_urls
