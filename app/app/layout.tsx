@@ -30,6 +30,11 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                 <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
                     integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
                     crossOrigin=""></script>
+                <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+                <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+                <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+                <link rel="manifest" href="/site.webmanifest" />
+                <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
             </head>
             <body>
                 <AuthContext>

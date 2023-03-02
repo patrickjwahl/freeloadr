@@ -366,7 +366,7 @@ def listings(user_id):
     image_urls = []
     listings = Listing.query.filter_by(owner_id=user_id)
     for listing in listings:
-        image_urls.append(get_urls(app.config['S3_BUCKET'], listing.id))
+        image_urls.append(get_urls(app.config['S3_BUCKET'], listing.id, app.config['CLOUDFRONT_DOMAIN']))
 
     return {'code': 'OK',
         'owner': person_schema.dump(owner),
@@ -380,7 +380,7 @@ def listing(listing_id):
     if not listing:
         return {'code': 'NO_LISTING_EXISTS'}
 
-    image_urls = get_urls(app.config['S3_BUCKET'], listing.id)
+    image_urls = get_urls(app.config['S3_BUCKET'], listing.id, app.config['CLOUDFRONT_DOMAIN'])
     
     owner = Person.query.filter_by(id=listing.owner_id).first()
     return {'code': 'OK',

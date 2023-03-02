@@ -242,15 +242,25 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
       }, []);
 
     useEffect(() => {
-        let lMap = L.map('map').setView([listing?.owner.lat, listing?.owner.lng], 15);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(lMap);
-        L.marker([listing?.owner.lat, listing?.owner.lng]).addTo(lMap);
-        setMap(lMap);
 
-        return () => lMap.remove();
+        const setUpMap = () => {
+
+            if (!L) {
+                setTimeout(setUpMap, 200);
+            } else {
+                let lMap = L.map('map').setView([listing?.owner.lat, listing?.owner.lng], 15);
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(lMap);
+                L.marker([listing?.owner.lat, listing?.owner.lng]).addTo(lMap);
+                setMap(lMap);
+            }
+        }
+
+        setUpMap();
+
+        return () => {if (map) map.remove()};
     }, [mapRef.current]);
 
     let sliderWidth, sliderHeight, mapWidth;
