@@ -5,7 +5,7 @@ import { getAPIDomain } from "../util/domain";
 import HomePage from "./HomePage";
 import SearchContent from "./search/SearchContent";
 
-export default async function Page({ searchParams }) {
+export default async function Page({ params, searchParams }) {
 
     const session = await getServerSession(authOptions);
 

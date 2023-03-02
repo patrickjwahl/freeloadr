@@ -26,8 +26,8 @@ export default function SignUpContent() {
     const [ isSubmitting, setIsSubmitting ] = useState(false);
 
     const router = useRouter();
-    const autocompleteRef = useRef();
-    const autocompleteInputRef = useRef();
+    const autocompleteRef = useRef(null);
+    const autocompleteInputRef = useRef(null);
 
     const searchParams = useSearchParams();
 

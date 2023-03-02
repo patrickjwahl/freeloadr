@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation';
-import { Listing, Person } from '../../lib/types';
+import { Listing, Person, Session } from '../../lib/types';
 import styles from './Profile.module.scss';
 import pluralize from 'pluralize';
 import ListingPreview from '../../components/ListingPreview';
@@ -126,7 +126,7 @@ export default function Profile({ owner, listings, images, apiDomain }: Props) {
                 method: 'POST',
                 body: JSON.stringify({ name, address, lat, lng }),
                 headers: {
-                    'Authorization': `Bearer ${session.data.access_token}`,
+                    'Authorization': `Bearer ${(session.data as Session).access_token}`,
                     'Content-Type': 'application/json'
                 }
             });
@@ -178,7 +178,7 @@ export default function Profile({ owner, listings, images, apiDomain }: Props) {
             <div className={styles.container}>
                 <div className={styles.leftContainer}>
                     <div className={styles.profileBox}>
-                        { session.status === 'authenticated' && session.data.user.id === owner.id ? editButtons : (null)}
+                        { session.status === 'authenticated' && (session.data as Session).user.id === owner.id ? editButtons : (null)}
                         { editing ? (
                             <div>
                                 <input type='text' placeholder='Name' value={name} onChange={e => setName(e.target.value)} />

@@ -1,6 +1,6 @@
 'use client'
 
-import { Session } from 'next-auth';
+import { Session } from '../../../lib/types';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,7 +18,7 @@ export default function ChatContent({ conversation, messages, thumbnail, session
         const [ numNewMessages, setNumNewMessages ] = useState(1);
 
         const clientSession = useSession();
-        const session = clientSession.status === 'loading' ? sessionData : clientSession.data;
+        const session = clientSession.status === 'loading' ? sessionData : clientSession.data as Session;
 
         const myListing = session.user.id != conversation.asker.id;
         const displayName = !myListing ? conversation.listing.owner.name : conversation.asker.name;

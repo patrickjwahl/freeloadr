@@ -5,9 +5,9 @@ import styles from '../styles/Auth.module.scss';
 import { ClipLoader } from 'react-spinners';
 import Image from 'next/image';
 import cn from 'classnames';
-import { Session } from 'next-auth';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { Session } from '../../lib/types';
 
 interface Props {
     sessionData: Session,

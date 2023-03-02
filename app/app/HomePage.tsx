@@ -16,8 +16,8 @@ export default function HomePage() {
     const [ lat, setLat ] = useState('');
     const [ lng, setLng ] = useState('');
 
-    const autocompleteRef = useRef();
-    const autocompleteInputRef = useRef();
+    const autocompleteRef = useRef(null);
+    const autocompleteInputRef = useRef(null);
 
     const buttonClicked = () => {
         router.push(`auth/signup?callbackURL=${encodeURIComponent(window.location.href)}`);

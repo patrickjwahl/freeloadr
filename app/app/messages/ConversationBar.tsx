@@ -1,6 +1,6 @@
 'use client'
 
-import { Session } from "next-auth";
+import { Session } from "../../lib/types";
 import Link from "next/link";
 import { Conversation, Message } from "../../lib/types";
 import styles from './Messages.module.scss';

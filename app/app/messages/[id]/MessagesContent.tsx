@@ -7,13 +7,13 @@ import cn from 'classnames';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import { useSession } from "next-auth/react";
 import React, { useEffect, useRef, useState } from "react";
-import { Session } from "next-auth";
+import { Session } from '../../../lib/types';
 dayjs.extend(LocalizedFormat);
 
 export default function MessagesContent({ messages, sessionData }: { messages: Array<Message>, sessionData: Session }) {
 
     const clientSession = useSession();
-    const session = clientSession.status === 'loading' ? sessionData : clientSession.data;
+    const session = clientSession.status === 'loading' ? sessionData : clientSession.data as Session;
 
     const sectionList: {[date: string]: Array<Message>} = {};
     const containerRef = useRef<HTMLDivElement>(null);

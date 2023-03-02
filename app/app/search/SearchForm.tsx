@@ -15,8 +15,8 @@ export default function SearchForm() {
     const [ lat, setLat ] = useState(params.has('lat') ? params.get('lng') : '');
     const [ lng, setLng ] = useState(params.has('lat') ? params.get('lng') : '');
 
-    const autocompleteRef = useRef();
-    const autocompleteInputRef = useRef();
+    const autocompleteRef = useRef(null);
+    const autocompleteInputRef = useRef(null);
     const router = useRouter();
 
     const autocompleteOptions = {

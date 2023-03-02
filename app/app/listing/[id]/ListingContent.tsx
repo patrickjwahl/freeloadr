@@ -1,6 +1,6 @@
 'use client'
 
-import { Listing } from "../../../lib/types";
+import { Listing, Session } from "../../../lib/types";
 import styles from './Listing.module.scss';
 import ImageSlider from '../../../components/ImageSlider';
 import { useEffect, useRef, useState } from "react";
@@ -152,7 +152,7 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
         const payload = {
             content: message,
             listingId: listing.id,
-            askerId: session.data.user.id,
+            askerId: (session.data as Session).user.id,
             sentAt: new Date().toISOString()
         };
 
@@ -161,7 +161,7 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
             body: JSON.stringify(payload),
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${session.data.access_token}`
+                'Authorization': `Bearer ${(session.data as Session).access_token}`
             }
         });
 
@@ -206,7 +206,7 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'Authorization': `Bearer ${session.data.access_token}`
+                    'Authorization': `Bearer ${(session.data as Session).access_token}`
                 }
             });
 
@@ -226,7 +226,7 @@ export default function ListingContent({ listing, images, apiDomain }: Props) {
     };
 
     useEffect(() => {
-        setIsMyPost(session.status === 'authenticated' && session.data?.user?.id == listing.owner.id);
+        setIsMyPost(session.status === 'authenticated' && (session.data as Session)?.user?.id == listing.owner.id);
     }, [session.data, session.status]);
 
     useEffect(() => {

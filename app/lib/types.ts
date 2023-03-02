@@ -1,3 +1,5 @@
+import { DefaultSession } from "next-auth";
+
 export interface Person {
     id: number;
     email: string;
@@ -32,4 +34,9 @@ export interface Conversation {
     asker: Person;
     last_modified: Date;
     last_message_text: string;
+}
+
+export interface Session extends DefaultSession {
+    access_token: string;
+    user: Person;
 }

@@ -13,7 +13,7 @@ const Layout = ({ children }) => {
 
     return (
         <MessageContext.Provider value={newMessages}>
-            <Navbar sidecarOpen={sidecarOpen} toggleSidecarOpen={toggleSidecarOpen} />
+            <Navbar />
             <main onMouseDown={() => {if (sidecarOpen) setSidecarOpen(false)}} onPointerDown={() => {if (sidecarOpen) setSidecarOpen(false)}}>{children}</main>
         </MessageContext.Provider>
     );

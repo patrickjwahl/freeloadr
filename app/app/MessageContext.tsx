@@ -3,7 +3,7 @@
 import { Context, createContext, ReactNode, useEffect, useState } from 'react';
 import { Message, Conversation } from '../lib/types';
 import { io } from 'socket.io-client';
-import { Session } from 'next-auth';
+import { Session } from '../lib/types';
 import { useSession } from 'next-auth/react';
 
 const initialNewMessages = [];
@@ -21,7 +21,7 @@ export default function MessageContextProvider({ sessionData, apiDomain, childre
     };
 
     const clientSession = useSession();
-    const session = clientSession.status === 'loading' ? sessionData : clientSession.data;
+    const session = clientSession.status === 'loading' ? sessionData : clientSession.data as Session;
 
     useEffect(() => {
 
