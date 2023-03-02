@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
+import { getAPIDomain } from '../../../util/domain';
 
 export const authOptions = {
     providers: [
@@ -43,7 +44,7 @@ export const authOptions = {
                     lng: credentials.lng
                 };
 
-                const res = await fetch('http://localhost:5000/user', {
+                const res = await fetch(`${getAPIDomain()}/user`, {
                     method: 'POST',
                     body: JSON.stringify(payload),
                     headers: {
@@ -87,7 +88,7 @@ export const authOptions = {
                     password: credentials.password
                 };
 
-                const res = await fetch('http://localhost:5000/login', {
+                const res = await fetch(`${getAPIDomain()}/login`, {
                     method: 'POST',
                     body: JSON.stringify(payload),
                     headers: {
@@ -113,7 +114,7 @@ export const authOptions = {
             }
         })
     ],
-    secret: 'deadlysecret',
+    secret: process.env.AUTH_SECRET || 'deadlysecret',
     callbacks: {
         jwt: async ({ token, user, account }) => {
             if (account && user) {

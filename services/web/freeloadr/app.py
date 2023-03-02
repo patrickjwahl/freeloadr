@@ -514,7 +514,7 @@ def disconnect_socket():
 
 @app.route('/')
 def hello():
-    socketio.emit('hello', {'data': 'world'})
+    #socketio.emit('hello', {'data': 'world'})
     return {'hello': 'world!'}
 
 if __name__ == '__main__':
