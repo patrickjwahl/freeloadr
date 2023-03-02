@@ -13,7 +13,7 @@ import traceback
 from PIL import Image, ImageOps
 from flask_socketio import emit
 
-from .s3_functions import upload_file, get_presigned_urls, delete_object, get_urls
+from .s3_functions import upload_file, delete_object, get_urls
 
 from .base import app, db, socketio
 from .model import Conversation, Message, Person, Listing, \
@@ -343,7 +343,7 @@ def search(current_user):
 @app.route('/search/guest', methods=['GET'])
 def guest_search():
     search_term = request.args.get('search')
-    radius = int(request.args.get('radius', 50))
+    radius = int(request.args.get('radius', 25))
     lat = request.args.get('lat')
     lng = request.args.get('lng')
 
@@ -366,7 +366,7 @@ def listings(user_id):
     image_urls = []
     listings = Listing.query.filter_by(owner_id=user_id)
     for listing in listings:
-        image_urls.append(get_presigned_urls(app.config['S3_BUCKET'], listing.id))
+        image_urls.append(get_urls(app.config['S3_BUCKET'], listing.id))
 
     return {'code': 'OK',
         'owner': person_schema.dump(owner),
@@ -380,7 +380,7 @@ def listing(listing_id):
     if not listing:
         return {'code': 'NO_LISTING_EXISTS'}
 
-    image_urls = get_presigned_urls(app.config['S3_BUCKET'], listing.id)
+    image_urls = get_urls(app.config['S3_BUCKET'], listing.id)
     
     owner = Person.query.filter_by(id=listing.owner_id).first()
     return {'code': 'OK',

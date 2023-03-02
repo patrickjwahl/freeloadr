@@ -1,5 +1,4 @@
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import { authOptions } from "../../pages/api/auth/[...nextauth]";
 import { getAPIDomain } from "../../util/domain";
 import SearchContent from "./SearchContent";
@@ -9,6 +8,10 @@ export default async function Page({ params, searchParams }) {
     const session = await getServerSession(authOptions);
 
     let newParams = [];
+
+    if (!searchParams['radius']) {
+        newParams.push('radius=25');
+    }
 
     const allowedParams = ['search', 'radius', 'lat', 'lng'];
     allowedParams.forEach(param => {

@@ -11,5 +11,5 @@ export default async function Page({ params, searchParams }) {
 
     if (!session) return <HomePage />;
 
-    redirect('/search');
+    redirect('/search?radius=25');
 }

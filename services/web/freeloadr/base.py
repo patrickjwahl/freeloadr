@@ -17,6 +17,6 @@ app.secret_key = os.getenv('SECRET_STRING')
 app.config['CLOUDFRONT_DOMAIN'] = os.getenv('CLOUDFRONT_DOMAIN')
 
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet')
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='eventlet', engineio_logger=True)
 
 db.init_app(app)
