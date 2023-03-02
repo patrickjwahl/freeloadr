@@ -15,13 +15,13 @@ export default async function Page({ params }) {
     let res = await fetch(`${getAPIDomain()}/conversation/mark/${id}`, {
         headers: {
             'Authorization': `Bearer ${session.access_token}`
-        }
+        }, cache: 'no-store' 
     });
 
     res = await fetch(`${getAPIDomain()}/conversations/${id}`, {
         headers: {
             'Authorization': `Bearer ${session.access_token}`
-        }
+        }, cache: 'no-store' 
     });
 
     const data = await res.json();

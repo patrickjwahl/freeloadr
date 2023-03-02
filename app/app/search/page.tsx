@@ -9,10 +9,6 @@ export default async function Page({ params, searchParams }) {
 
     let newParams = [];
 
-    if (!searchParams['radius']) {
-        newParams.push('radius=25');
-    }
-
     const allowedParams = ['search', 'radius', 'lat', 'lng'];
     allowedParams.forEach(param => {
         if (searchParams[param]) {
@@ -26,7 +22,7 @@ export default async function Page({ params, searchParams }) {
 
     const headers = !session ? {} : {Authorization: `Bearer ${session.access_token}`}
 
-    const res = await fetch(url, { headers }); 
+    const res = await fetch(url, { headers, cache: 'no-store' }); 
 
     const data = await res.json();
 
