@@ -55,7 +55,7 @@ export default function SignUpContent() {
 
     const validatePassword = (forSubmit = false) => {
         if(String(password)
-            .match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
+            .match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)) {
 
             if (passwordError) setPasswordError(false);
             return true;

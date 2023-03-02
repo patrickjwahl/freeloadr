@@ -60,7 +60,7 @@ const Navbar = () => {
             <div onClick={() => {if (sidecarOpen) setSidecarOpen(false)}} className={styles.container}>
                 <div className={styles.logoContainer}>
                     <Link href='/'>
-                        <Image src={logoImg} alt="logo" />
+                        <Image priority src={logoImg} alt="logo" />
                     </Link>
                 </div>
                 <div className={styles.buttonsContainer}>

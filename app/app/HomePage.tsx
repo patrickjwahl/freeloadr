@@ -78,7 +78,7 @@ export default function HomePage() {
             <div className={styles.container}>
                 <div className={styles.heroContainer}>
                     <div className={styles.heroImage} >
-                        <Image src={logo} alt='hello' />
+                        <Image src={logo} alt='hello' priority />
                         <div>
                             <h1>Welcome to Freeloadr!</h1>
                             <h4>Share with your neighbors and resist the demonic cult of consumerism!</h4>
